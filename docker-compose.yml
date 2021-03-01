@@ -1,0 +1,75 @@
+version: "3.3"
+services:
+  mongo_db:
+    image: mongo:4.0
+    volumes:
+      - mongo_db:/data/db
+    networks:
+      - prometheus
+  prometheus:
+    image: prom/prometheus:v2.25.0
+    ports:
+      - "9090:9090"
+    volumes:
+      - type: bind
+        source: ./prometheus/prometheus.yml
+        target: /etc/prometheus/prometheus.yml
+      - type: bind
+        source: ./prometheus/alert.rules.yml
+        target: /etc/prometheus/alert.rules.yml
+      - prometheus_data:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--storage.tsdb.retention=1d"
+      - "--web.enable-lifecycle"
+    networks:
+      - prometheus
+  mongo-exporter:
+    # image: barmank32/mongodb_exporter:0.20.2
+    image: fmet/mongodb_exporter:0.10.0
+    command:
+      - "--mongodb.uri=mongodb://mongo_db:27017"
+    networks:
+      - prometheus
+  blackbox-exporter:
+    image: prom/blackbox-exporter
+    volumes:
+      - type: bind
+        source: ./blackbox-exporter/config.yml
+        target: /etc/blackboxexporter/config.yml
+    command:
+      - "--config.file=/etc/blackboxexporter/config.yml"
+    networks:
+      - prometheus
+  grafana:
+    image: grafana/grafana:7.4.3
+    ports:
+      - 3000:3000
+    user: "472:1"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    networks:
+      - prometheus
+  alertmanager:
+    image: prom/alertmanager:v0.21.0
+    ports:
+      - 9093:9093
+    networks:
+      - prometheus
+  pushgateway:
+    image: prom/pushgateway:v1.4.0
+    ports:
+      - 9091:9091
+    networks:
+      - prometheus
+
+volumes:
+  mongo_db:
+  prometheus_data:
+  grafana_data:
+
+networks:
+  prometheus:
+    driver: bridge
+
