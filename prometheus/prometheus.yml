@@ -23,6 +23,8 @@ scrape_configs:
     static_configs:
       - targets:
           - http://192.168.0.1/rainloop/
+          - http://192.168.0.8:8000/
+          - https://192.168.0.5:8006/
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target
@@ -37,6 +39,8 @@ scrape_configs:
     static_configs:
       - targets:
           - prometheus
+          - 192.168.0.250
+          - 192.168.0.252
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target
@@ -44,6 +48,10 @@ scrape_configs:
         target_label: instance
       - target_label: __address__
         replacement: blackbox-exporter:9115
+  - job_name: "linux-gw"
+    static_configs:
+      - targets:
+          - "192.168.0.1:9100"
 
 #Alertmanager settings
 
