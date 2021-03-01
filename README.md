@@ -5,6 +5,7 @@
 - https://grafana.com/grafana/dashboards/11074
 - https://grafana.com/grafana/dashboards/7353
 - https://grafana.com/grafana/dashboards/7587
+- https://grafana.com/grafana/dashboards/10566
 
 ## Node Exporter
 https://github.com/prometheus/node_exporter
@@ -44,3 +45,6 @@ sudo systemctl enable node_exporter
 sudo systemctl start node_exporter
 ```
 проверка `http://<IP-адрес сервера или клиента>:9100/metrics`
+
+## Cadvisor
+gcr.io/cadvisor/cadvisor

@@ -6,6 +6,7 @@ services:
       - mongo_db:/data/db
     networks:
       - prometheus
+    restart: always
   prometheus:
     image: prom/prometheus:v2.25.0
     ports:
@@ -25,6 +26,7 @@ services:
       - "--web.enable-lifecycle"
     networks:
       - prometheus
+    restart: always
   mongo-exporter:
     # image: barmank32/mongodb_exporter:0.20.2
     image: fmet/mongodb_exporter:0.10.0
@@ -32,6 +34,7 @@ services:
       - "--mongodb.uri=mongodb://mongo_db:27017"
     networks:
       - prometheus
+    restart: always
   blackbox-exporter:
     image: prom/blackbox-exporter
     volumes:
@@ -42,6 +45,7 @@ services:
       - "--config.file=/etc/blackboxexporter/config.yml"
     networks:
       - prometheus
+    restart: always
   grafana:
     image: grafana/grafana:7.4.3
     ports:
@@ -51,18 +55,33 @@ services:
       - grafana_data:/var/lib/grafana
     networks:
       - prometheus
+    restart: always
   alertmanager:
     image: prom/alertmanager:v0.21.0
     ports:
       - 9093:9093
     networks:
       - prometheus
+    restart: always
   pushgateway:
     image: prom/pushgateway:v1.4.0
     ports:
       - 9091:9091
     networks:
       - prometheus
+    restart: always
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    ports:
+    - 8080:8080
+    volumes:
+    - /:/rootfs:ro
+    - /var/run:/var/run:rw
+    - /sys:/sys:ro
+    - /var/lib/docker/:/var/lib/docker:ro    
+    networks:
+      - prometheus
+    restart: always
 
 volumes:
   mongo_db:
