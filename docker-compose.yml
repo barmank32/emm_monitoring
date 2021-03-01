@@ -60,6 +60,10 @@ services:
     image: prom/alertmanager:v0.21.0
     ports:
       - 9093:9093
+    volumes:
+      - type: bind
+        source: ./alertmanager/alertmanager.yml
+        target: /etc/alertmanager/alertmanager.yml
     networks:
       - prometheus
     restart: always
@@ -72,8 +76,6 @@ services:
     restart: always
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:latest
-    ports:
-    - 8080:8080
     volumes:
     - /:/rootfs:ro
     - /var/run:/var/run:rw
@@ -91,6 +93,18 @@ services:
     networks:
       - prometheus
     restart: always
+  alerta:
+    image: alerta/alerta-web
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mongo_db
+    env_file:
+     - ./alerta/.env
+    networks:
+      - prometheus
+    restart: always
+
 volumes:
   mongo_db:
   prometheus_data:
