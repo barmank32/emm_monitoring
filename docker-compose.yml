@@ -82,7 +82,15 @@ services:
     networks:
       - prometheus
     restart: always
-
+  pve-exporter:
+    image: prompve/prometheus-pve-exporter
+    volumes:
+      - type: bind
+        source: ./pve-exporter/pve.yml
+        target: /etc/pve.yml
+    networks:
+      - prometheus
+    restart: always
 volumes:
   mongo_db:
   prometheus_data:
