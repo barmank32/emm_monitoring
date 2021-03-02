@@ -70,6 +70,11 @@ scrape_configs:
         target_label: instance
       - target_label: __address__
         replacement: pve-exporter:9221  # PVE exporter.
+  - job_name: mysql-monitor
+    static_configs:
+    - targets:
+      - mssql-exporter:4000
+       
 
 #Alertmanager settings
 
